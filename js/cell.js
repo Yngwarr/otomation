@@ -9,7 +9,7 @@ class Cell {
     }
 
     revert() {
-        this.soundbank = 'c-nine';
+        this.instr = 'c-nine';
         this.direction = DIR_UP;
         this.position = { x: 0, y: 0 };
     }
@@ -38,7 +38,7 @@ class Cell {
         this.direction = (this.direction+2) % 4;
     }
 
-    play_sound(num) {
-        console.log(`beep${num}`);
+    play_sound(player, num) {
+        player.play(this.instr, num);
     }
 }

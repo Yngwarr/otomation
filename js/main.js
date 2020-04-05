@@ -1,30 +1,3 @@
-const SCALE_SIZE = 9;
-
-async function load_blob(url) {
-    const response = await fetch(url);
-    if (response.status !== 200) throw Error(response.status);
-    const blob = await response.arrayBuffer();
-    return blob;
-}
-
-async function load_audio(ctx, url) {
-    return await ctx.decodeAudioData(await load_blob(url));
-}
-
-async function load_scale(ctx, name) {
-    let bufs = Array.apply(null, { length: SCALE_SIZE });
-    for (let i = 1; i <= SCALE_SIZE; ++i) {
-        bufs[i-1] = await load_audio(ctx, `sound/${name}/${i}.wav`);
-    }
-    const sounds = bufs.map(x => {
-        const src = ctx.createBufferSource();
-        src.buffer = x;
-        src.connect(ctx.destination);
-        return src;
-    });
-    return sounds;
-}
-
 const btn_click = pool => e => {
     const btn = e.target;
 
@@ -84,52 +57,56 @@ function find_overlaps(pool) {
     return res;
 }
 
-function step(pool, board) {
+function step(pool, board, player) {
     // resolve overlapping
     const ops = find_overlaps(pool);
-    console.log(ops);
     ops.forEach(op => {
         op.forEach(x => pool.get(x).rotate());
     });
     // change positions & make sounds
     pool.for_each(cell => {
-        const {x, y} = cell.step();
+        let {x, y} = cell.step();
         // TODO play some animation
         if (x < 0 || x >= board.w) {
-            cell.play_sound(y+1);
+            // TODO sound player
+            //cell.play_sound(player, y+1);
             cell.turn_around()
+            const {x: _x, y: _y} = cell.step();
+            x = _x; y = _y;
         } else if (y < 0 || y >= board.h) {
-            cell.play_sound(x+1);
+            //cell.play_sound(player, x+1);
             cell.turn_around()
-        } else {
-            const {x: _x, y: _y} = cell.position;
-            let _btn = board.at(_x, _y);
-            _btn.classList.add('empty');
-            _btn.dataset.cell = undefined;
-            cell.move(x, y);
+            const {x: _x, y: _y} = cell.step();
+            x = _x; y = _y;
         }
+        const {x: _x, y: _y} = cell.position;
+        let _btn = board.at(_x, _y);
+        _btn.classList.add('empty');
+        _btn.dataset.cell = undefined;
+        cell.move(x, y);
     });
     // redraw grid
     pool.for_each(cell => {
         const {x, y} = cell.position;
         let btn = board.at(x, y);
 
-        if (!btn.classList.contains('empty')) {
-            // TODO draw a circle
-        } else {
+        if (btn.classList.contains('empty')) {
             btn.classList.remove('empty');
             draw_cell(btn, cell);
+        } else {
+            // TODO draw a circle
         }
     });
 }
 
 let board;
 let pool;
+let aplayer;
 
 let timerid;
 
 function start_timer() {
-    timerid = setInterval(step, 400, pool, board);
+    timerid = setInterval(step, 400, pool, board, aplayer);
 }
 
 function stop_timer() {
@@ -137,22 +114,20 @@ function stop_timer() {
 }
 
 async function init() {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    const audioContext = new AudioContext();
-
+    aplayer = new AudioPlayer();
     document.querySelector('#start').addEventListener('click', e => {
-        audioContext.resume().then(() => console.log('audio initialized'));
-        load_audio(audioContext, 'sound/jingle.wav').then(res => {
-            const src = audioContext.createBufferSource();
+        aplayer.ctx.resume().then(() => console.log('audio initialized'));
+        aplayer.load_audio(aplayer.ctx, 'sound/jingle.wav').then(res => {
+            const src = aplayer.ctx.createBufferSource();
             src.buffer = res;
-            src.connect(audioContext.destination);
+            src.connect(aplayer.ctx.destination);
             src.start(0);
             e.target.remove();
         });
         start_timer();
     });
 
-    const sounds = await load_scale(audioContext, 'c-nine');
+    const sounds = await aplayer.load_instr('c-nine');
     pool = new Pool(Cell, 10);
     board = new Board(9, btn_click(pool));
     document.getElementById('wrapper').appendChild(board.elem);

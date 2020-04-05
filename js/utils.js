@@ -1,3 +1,10 @@
+async function load_blob(url) {
+    const response = await fetch(url);
+    if (response.status !== 200) throw Error(response.status);
+    const blob = await response.arrayBuffer();
+    return blob;
+}
+
 function slice_to_char(str, from, to) {
     const indices = to.map(s => str.indexOf(s)).filter(i => i > -1);
     return str.slice(from, Math.min(...indices))

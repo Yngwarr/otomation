@@ -7,8 +7,8 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 }
 
 :root {
-    --dark-color: black;
-    --light-color: white;
+    --dark-color: #f7b58c;
+    --light-color: #84739c;
     --button-size: 5rem;
 }
 
@@ -19,7 +19,7 @@ html {
 }
 
 body {
-    background: #fff;
+    background: var(--light-color);
 }
 
 body * {
@@ -67,8 +67,8 @@ a:hover {
 }
 
 .board button {
-    background-color: var(--light-color);
-    color: var(--dark-color);
+    background-color: var(--dark-color);
+    color: var(--light-color);
     border: 2px solid var(--dark-color);
     border-radius: 8px;
     width: var(--button-size);
@@ -77,8 +77,13 @@ a:hover {
     min-height: var(--button-size);
     font-size: 3rem;
     margin: .1rem;
-    -webkit-transition-duration: .5s;
-    transition-duration: .5s;
+    -webkit-transition-duration: .2s;
+    transition-duration: .2s;
+}
+
+.board button.empty {
+    background-color: var(--light-color);
+    color: var(--dark-color);
 }
 
 .board button:hover {
