@@ -25,6 +25,8 @@ async function load_scale(ctx, name) {
     return sounds;
 }
 
+let board;
+
 async function init() {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioContext = new AudioContext();
@@ -40,5 +42,6 @@ async function init() {
     });
 
     const sounds = await load_scale(audioContext, 'c-nine');
-    console.log(sounds);
+    board = new Board(5);
+    document.body.appendChild(board.elem);
 }
