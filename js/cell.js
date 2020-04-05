@@ -5,6 +5,10 @@ const DIR_LEFT = 3;
 
 class Cell {
     constructor() {
+        this.revert();
+    }
+
+    revert() {
         this.soundbank = 'c-nine';
         this.direction = DIR_UP;
         this.position = { x: 0, y: 0 };
@@ -24,5 +28,9 @@ class Cell {
             case DIR_RIGHT: return { x: x + 1, y: y };
         }
         throw `direction must be 0-3, got ${this.direction}`;
+    }
+
+    rotate() {
+        this.direction = (this.direction+1) % 4;
     }
 }

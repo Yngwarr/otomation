@@ -1,8 +1,9 @@
 class Board {
-    constructor(side) {
+    constructor(side, onclick) {
         this.w = side;
         // will be filled by add_rows
         this.h = 0;
+        this.onclick = onclick;
         this.elem = mk_elem('.board');
         this.add_rows(side);
     }
@@ -17,9 +18,7 @@ class Board {
         for (let i = 0; i < n; ++i) {
             const row = mk_elem('.row');
             for (let j = 0; j < this.w; ++j) {
-                let btn = mk_elem('button.empty');
-                btn.innerText = '△';
-                row.appendChild(btn);
+                row.appendChild(this.mk_btn());
             }
             this.elem.appendChild(row);
         }
@@ -35,12 +34,18 @@ class Board {
 
         this.elem.querySelectorAll('.row').forEach(row => {
             for (let i = 0; i < n; ++i) {
-                let btn = mk_elem('button.empty');
-                btn.innerText = '△';
-                row.appendChild(btn);
+                row.appendChild(this.mk_btn());
             }
         });
         this.w += n;
+    }
+
+    mk_btn() {
+        let btn = mk_elem('button.empty');
+        btn.innerText = '△';
+        btn.addEventListener('mousedown', this.onclick);
+        btn.addEventListener('contextmenu', e => e.preventDefault());
+        return btn;
     }
 
     rm_rows(n) {

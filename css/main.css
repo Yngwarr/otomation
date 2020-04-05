@@ -9,6 +9,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 :root {
     --dark-color: black;
     --light-color: white;
+    --button-size: 5rem;
 }
 
 .hidden { display: none; opacity: 0; }
@@ -70,10 +71,10 @@ a:hover {
     color: var(--dark-color);
     border: 2px solid var(--dark-color);
     border-radius: 8px;
-    width: 7rem;
-    min-width: 7rem;
-    height: 7rem;
-    min-height: 7rem;
+    width: var(--button-size);
+    min-width: var(--button-size);
+    height: var(--button-size);
+    min-height: var(--button-size);
     font-size: 3rem;
     margin: .1rem;
     -webkit-transition-duration: .5s;
