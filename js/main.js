@@ -38,10 +38,11 @@ async function init() {
             src.buffer = res;
             src.connect(audioContext.destination);
             src.start(0);
+            e.target.remove();
         });
     });
 
     const sounds = await load_scale(audioContext, 'c-nine');
-    board = new Board(5);
-    document.body.appendChild(board.elem);
+    board = new Board(9);
+    document.getElementById('wrapper').appendChild(board.elem);
 }

@@ -41,9 +41,28 @@ a:hover {
     text-shadow: 2px 2px #ccc;
 }
 
+#start {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+#wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
 .board {
-    width: 36rem;
-    margin: 4rem auto;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.board.row {
+    display: flex;
+    flex-flow: row nowrap;
 }
 
 .board button {
