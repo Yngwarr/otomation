@@ -58,4 +58,11 @@ class Pool {
         this.arr[n]._in_use = false;
         if (this.revert && this.arr[n].revert) this.arr[n].revert();
     }
+
+    for_each(callback) {
+        for (let i = 0; i < this.arr.length; ++i) {
+            if (!this.arr[i]._in_use) continue;
+            callback(this.arr[i]);
+        }
+    }
 }

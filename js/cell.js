@@ -33,4 +33,12 @@ class Cell {
     rotate() {
         this.direction = (this.direction+1) % 4;
     }
+
+    turn_around() {
+        this.direction = (this.direction+2) % 4;
+    }
+
+    play_sound(num) {
+        console.log(`beep${num}`);
+    }
 }

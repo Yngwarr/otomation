@@ -18,7 +18,10 @@ class Board {
         for (let i = 0; i < n; ++i) {
             const row = mk_elem('.row');
             for (let j = 0; j < this.w; ++j) {
-                row.appendChild(this.mk_btn());
+                let btn = this.mk_btn();
+                btn.dataset.x = j;
+                btn.dataset.y = this.h + i;
+                row.appendChild(btn);
             }
             this.elem.appendChild(row);
         }
@@ -32,9 +35,12 @@ class Board {
             return;
         }
 
-        this.elem.querySelectorAll('.row').forEach(row => {
-            for (let i = 0; i < n; ++i) {
-                row.appendChild(this.mk_btn());
+        this.elem.querySelectorAll('.row').forEach((row, i) => {
+            for (let j = 0; j < n; ++j) {
+                let btn = this.mk_btn();
+                btn.dataset.x = this.w + j;
+                btn.dataset.y = i;
+                row.appendChild(btn);
             }
         });
         this.w += n;
@@ -63,5 +69,13 @@ class Board {
             }
         }
         this.w -= n;
+    }
+
+    at(x, y) {
+        if (x < 0 || x >= this.w || y < 0 || y >= this.h) {
+            throw `tried to get button (${x}, ${y}) on a grid with size = `
+                + `(${this.w}, ${this.h})`;
+        }
+        return this.elem.children[y].children[x];
     }
 }

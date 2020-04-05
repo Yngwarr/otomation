@@ -34,6 +34,8 @@ const btn_click = pool => e => {
 
             const cell_n = pool.alloc_n();
             let cell = pool.get(cell_n);
+            cell.position.x = parseInt(btn.dataset.x, 10);
+            cell.position.y = parseInt(btn.dataset.y, 10);
 
             btn.dataset.cell = `${cell_n}`;
             draw_cell(btn, cell)
@@ -64,8 +66,54 @@ function draw_cell(btn, cell) {
     btn.innerText = txt;
 }
 
+function step(pool, board) {
+    console.log('ass');
+    // TODO resolve overlapping
+    // change positions
+    // make sounds
+    pool.for_each(cell => {
+        const {x, y} = cell.step();
+        // TODO play some animation
+        if (x < 0 || x >= board.w) {
+            cell.play_sound(y+1);
+            cell.turn_around()
+        } else if (y < 0 || y >= board.h) {
+            cell.play_sound(x+1);
+            cell.turn_around()
+        } else {
+            const {x: _x, y: _y} = cell.position;
+            let _btn = board.at(_x, _y);
+            _btn.classList.add('empty');
+            _btn.dataset.cell = undefined;
+            cell.move(x, y);
+        }
+    });
+    // redraw grid
+    pool.for_each(cell => {
+        const {x, y} = cell.position;
+        let btn = board.at(x, y);
+
+        if (!btn.classList.contains('empty')) {
+            // TODO draw a circle
+        } else {
+            btn.classList.remove('empty');
+            draw_cell(btn, cell);
+        }
+    });
+}
+
 let board;
 let pool;
+
+var timerid;
+
+function start_timer() {
+    timerid = setInterval(step, 400, pool, board);
+}
+
+function stop_timer() {
+    clearInterval(timerid);
+}
 
 async function init() {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -80,6 +128,7 @@ async function init() {
             src.start(0);
             e.target.remove();
         });
+        start_timer();
     });
 
     const sounds = await load_scale(audioContext, 'c-nine');
