@@ -62,7 +62,7 @@ class Pool {
     for_each(callback) {
         for (let i = 0; i < this.arr.length; ++i) {
             if (!this.arr[i]._in_use) continue;
-            callback(this.arr[i]);
+            callback(this.arr[i], i);
         }
     }
 }

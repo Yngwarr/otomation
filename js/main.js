@@ -66,11 +66,32 @@ function draw_cell(btn, cell) {
     btn.innerText = txt;
 }
 
+function find_overlaps(pool) {
+    let ops = {};
+    pool.for_each((cell, i) => {
+        const key = [cell.position.x, cell.position.y].toString();
+        if (ops[key]) {
+            ops[key].push(i);
+        } else {
+            ops[key] = [i];
+        }
+    });
+    let res = [];
+    for (let i in ops) {
+        if (ops[i].length === 1) continue;
+        res.push(ops[i]);
+    }
+    return res;
+}
+
 function step(pool, board) {
-    console.log('ass');
-    // TODO resolve overlapping
-    // change positions
-    // make sounds
+    // resolve overlapping
+    const ops = find_overlaps(pool);
+    console.log(ops);
+    ops.forEach(op => {
+        op.forEach(x => pool.get(x).rotate());
+    });
+    // change positions & make sounds
     pool.for_each(cell => {
         const {x, y} = cell.step();
         // TODO play some animation
@@ -105,7 +126,7 @@ function step(pool, board) {
 let board;
 let pool;
 
-var timerid;
+let timerid;
 
 function start_timer() {
     timerid = setInterval(step, 400, pool, board);
